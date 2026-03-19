@@ -31,3 +31,11 @@ Then configure and build circle-stdlib and the linkhut tool in examples/linkhut/
 ./configure -r 3 -p aarch64-none-elf-
 make -j
 ```
+
+Cleanup project with:
+
+```
+make clean
+make unpatch
+
+```
