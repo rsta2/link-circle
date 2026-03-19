@@ -1,0 +1,84 @@
+#pragma once
+
+#include <circle/sched/mutex.h>
+#include <cassert>
+
+namespace std
+{
+
+class mutex
+{
+public:
+	void lock (void)
+	{
+		m_CircleMutex.Acquire ();
+	}
+
+	void unlock (void)
+	{
+		m_CircleMutex.Release ();
+	}
+
+private:
+	CMutex m_CircleMutex;
+};
+
+template<typename TMutex>
+class unique_lock
+{
+public:
+	unique_lock (TMutex &rMutex)
+	:	m_rMutex (rMutex),
+		m_bLocked (false)
+	{
+		lock ();
+		m_bLocked = true;
+	}
+
+	~unique_lock (void)
+	{
+		if (m_bLocked)
+		{
+			unlock();
+		}
+	}
+
+	void lock (void)
+	{
+		assert (!m_bLocked);
+		m_rMutex.lock();
+		m_bLocked = true;
+	}
+
+	void unlock (void)
+	{
+		assert (m_bLocked);
+		m_rMutex.unlock();
+		m_bLocked = false;
+	}
+
+private:
+	TMutex &m_rMutex;
+	bool m_bLocked;
+};
+
+template<typename TMutex>
+class lock_guard
+{
+public:
+	lock_guard (TMutex &rMutex)
+	:	m_rMutex (rMutex)
+	{
+		m_rMutex.lock ();
+	}
+
+	~lock_guard (void)
+	{
+		m_rMutex.unlock ();
+	}
+
+private:
+	TMutex &m_rMutex;
+};
+
+} // namespace std

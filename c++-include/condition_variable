@@ -1,0 +1,117 @@
+#pragma once
+
+#include <circle/sched/synchronizationevent.h>
+#include <mutex>
+#include <chrono>
+#include <cassert>
+
+namespace std
+{
+
+enum class cv_status
+{
+	no_timeout,
+	timeout
+};
+
+class condition_variable
+{
+public:
+	condition_variable (void)
+	:	m_nTasksWaiting (0),
+		m_Event (false)
+	{
+	}
+
+	~condition_variable (void)
+	{
+		assert (!m_nTasksWaiting);
+	}
+
+	void notify_one (void)
+	{
+		assert (!m_Event.GetState ());
+		m_Event.Set ();
+		m_Event.Clear ();
+	}
+
+	void wait (unique_lock<mutex> &Lock)
+	{
+		m_nTasksWaiting++;
+		Lock.unlock ();
+
+		m_Event.Wait ();
+
+		Lock.lock ();
+		m_nTasksWaiting--;
+	}
+
+	template<typename Predicate>
+	void wait (unique_lock<mutex> &Lock, Predicate Pred)
+	{
+		while (!Pred ())
+		{
+			wait (Lock);
+		}
+	}
+
+	template<typename Clock, typename Duration>
+	std::cv_status wait_until (unique_lock<mutex> &Lock,
+				   const chrono::time_point<Clock, Duration> &AbsTime)
+	{
+		chrono::time_point<Clock> Now = Clock::now ();
+		if (AbsTime <= Now)
+		{
+			return cv_status::no_timeout;
+		}
+
+		unsigned us = chrono::duration_cast<chrono::microseconds>(AbsTime - Now).count ();
+
+		m_nTasksWaiting++;
+		Lock.unlock ();
+
+		std::cv_status Status =   m_Event.WaitWithTimeout (us) && !m_Event.GetState ()
+					? cv_status::timeout : cv_status::no_timeout;
+
+		Lock.lock ();
+		m_nTasksWaiting--;
+
+		return Status;
+	}
+
+	template<typename Clock, typename Duration, typename Predicate>
+	bool wait_until (unique_lock<std::mutex> &Lock,
+			const chrono::time_point<Clock, Duration> &AbsTime, Predicate Pred)
+	{
+		while (!Pred ())
+		{
+			if (wait_until (Lock, AbsTime) == cv_status::timeout)
+			{
+				return Pred ();
+			}
+		}
+
+		return true;
+	}
+
+	template<typename Rep, typename Period>
+	std::cv_status wait_for (unique_lock<mutex> &Lock,
+				 const chrono::duration<Rep, Period> &RelTime)
+	{
+		return wait_until (Lock, chrono::steady_clock::now () + RelTime);
+	}
+
+
+	template<typename Rep, typename Period, typename Predicate>
+	bool wait_for (unique_lock<mutex> &Lock,
+		       const chrono::duration<Rep, Period> &RelTime, Predicate Pred)
+	{
+		return wait_until (Lock, chrono::steady_clock::now () + RelTime, move (Pred));
+	}
+
+private:
+	volatile unsigned m_nTasksWaiting;
+	CSynchronizationEvent m_Event;
+};
+
+} // namespace std
