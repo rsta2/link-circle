@@ -1,0 +1,146 @@
+diff --git a/newlib/libc/include/string.h b/newlib/libc/include/string.h
+index 32199c027..646e65ee7 100644
+--- a/newlib/libc/include/string.h
++++ b/newlib/libc/include/string.h
+@@ -93,7 +93,7 @@ char 	*_strndup_r (struct _reent *, const char *, size_t);
+    _GNU_SOURCE, you get the GNU version; otherwise you get the POSIX
+    version.  POSIX requires that #undef strerror_r will still let you
+    invoke the underlying function, but that requires gcc support.  */
+-#if __GNU_VISIBLE
++#if __GNU_VISIBLE || defined(__circle__)
+ char	*strerror_r (int, char *, size_t);
+ #elif __POSIX_VISIBLE >= 200112
+ # ifdef __GNUC__
+diff --git a/newlib/libc/include/sys/signal.h b/newlib/libc/include/sys/signal.h
+index 96bf9781a..826e0df04 100644
+--- a/newlib/libc/include/sys/signal.h
++++ b/newlib/libc/include/sys/signal.h
+@@ -117,6 +117,8 @@ struct sigaction {
+ 
+ #define SA_NOCLDSTOP 1  /* only value supported now for sa_flags */
+ 
++#define SA_RESTART   0x10000000
++
+ typedef void (*_sig_func_ptr)(int);
+ 
+ struct sigaction 
+diff --git a/newlib/libc/include/sys/unistd.h b/newlib/libc/include/sys/unistd.h
+index 13b0c166f..dd4d941f8 100644
+--- a/newlib/libc/include/sys/unistd.h
++++ b/newlib/libc/include/sys/unistd.h
+@@ -295,7 +295,7 @@ int	getdtablesize (void);
+ useconds_t ualarm (useconds_t __useconds, useconds_t __interval);
+ #endif
+ 
+-#if __BSD_VISIBLE || __POSIX_VISIBLE >= 200112 || __XSI_VISIBLE >= 500
++#if __BSD_VISIBLE || __POSIX_VISIBLE >= 200112 || __XSI_VISIBLE >= 500 || defined(__circle__)
+ #if !(defined  (_WINSOCK_H) || defined (_WINSOCKAPI_) || defined (__USE_W32_SOCKETS))
+ /* winsock[2].h defines as __stdcall, and with int as 2nd arg */
+  int	gethostname (char *__name, size_t __len);
+diff --git a/newlib/libc/sys/circle/include/netinet/in.h b/newlib/libc/sys/circle/include/netinet/in.h
+index 5fa489f60..01357e6f7 100644
+--- a/newlib/libc/sys/circle/include/netinet/in.h
++++ b/newlib/libc/sys/circle/include/netinet/in.h
+@@ -87,4 +87,41 @@ struct ip_mreq_source
+ #define IP_UNBLOCK_SOURCE (IP_ADD_MEMBERSHIP + 30)
+ #define SO_PEERSEC (IP_ADD_MEMBERSHIP + 31)
+ 
+-#endif
+\ No newline at end of file
++/* The following IPv6 definitions are not really supported,
++   but are necessary to compile Asio: */
++
++struct in6_addr
++{
++    union
++    {
++        uint8_t u6_addr8[16];
++    }
++    in6_u;
++#define s6_addr in6_u.u6_addr8
++};
++
++struct sockaddr_in6
++{
++    uint16_t        sin6_family;
++    uint16_t        sin6_port;
++    uint32_t        sin6_flowinfo;
++    struct in6_addr sin6_addr;
++    uint32_t        sin6_scope_id;
++};
++
++struct ipv6_mreq
++{
++        struct in6_addr ipv6mr_multiaddr;
++        unsigned        ipv6mr_interface;
++};
++
++#define IPPROTO_ICMPV6 58
++
++#define IPV6_UNICAST_HOPS (IP_ADD_MEMBERSHIP + 32)
++#define IPV6_MULTICAST_IF (IP_ADD_MEMBERSHIP + 33)
++#define IPV6_MULTICAST_HOPS (IP_ADD_MEMBERSHIP + 34)
++#define IPV6_MULTICAST_LOOP (IP_ADD_MEMBERSHIP + 35)
++#define IPV6_JOIN_GROUP (IP_ADD_MEMBERSHIP + 36)
++#define IPV6_LEAVE_GROUP (IP_ADD_MEMBERSHIP + 37)
++
++#endif
+diff --git a/newlib/libc/sys/circle/sys/select.h b/newlib/libc/sys/circle/sys/select.h
+index 4fd287325..5132b43a8 100644
+--- a/newlib/libc/sys/circle/sys/select.h
++++ b/newlib/libc/sys/circle/sys/select.h
+@@ -10,6 +10,7 @@
+ #define _SYS_SELECT_H
+ 
+ #include <sys/_sigset.h>
++#include <sys/_timeval.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -24,8 +25,6 @@ typedef struct {
+     int _x;
+ } fd_set;
+ 
+-struct timeval;
+-
+ int pselect(int nfds, fd_set *readfds,
+             fd_set *writefds, fd_set *errorfds,
+             const struct timespec *timeout,
+@@ -45,4 +44,4 @@ void FD_ZERO(fd_set *fdset);
+ }
+ #endif
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff --git a/newlib/libc/sys/circle/sys/socket.h b/newlib/libc/sys/circle/sys/socket.h
+index 4833edd37..8f761559b 100644
+--- a/newlib/libc/sys/circle/sys/socket.h
++++ b/newlib/libc/sys/circle/sys/socket.h
+@@ -81,6 +81,7 @@ int     shutdown(int socket, int how);
+ int     socket(int domain, int type, int protocol);
+ int     socketpair(int domain, int type, int protocol,
+              int socket_vector[2]);
++int     sockatmark(int socket);
+ 
+ /* */
+ #define SOCK_DGRAM  1                   /* Datagram socket. */
+@@ -141,6 +142,11 @@ int     socketpair(int domain, int type, int protocol,
+ #define AF_UNIX     (AF_INET + 2)   /* UNIX domain sockets. */
+ #define AF_UNSPEC   (AF_INET + 3)   /* Unspecified. */
+ 
++/* Protocol families  */
++#define PF_INET         AF_INET     /* IP protocol family.  */
++#define PF_INET6        AF_INET6    /* IP version 6.  */
++#define PF_UNSPEC       AF_UNSPEC   /* Unspecified. */
++
+ /* Type of shutdown for shutdown() "how" argument: */
+ #define SHUT_RD     1               /* Disables further receive operations. */
+ #define SHUT_WR     (SHUT_RD + 1)   /* Disables further send operations. */
+@@ -175,4 +181,4 @@ int     socketpair(int domain, int type, int protocol,
+ }
+ #endif
+ 
+-#endif
+\ No newline at end of file
++#endif
