@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd modules/circle-stdlib
+
+./configure $* -o KERNEL_MAX_SIZE=0x400000
+
+cd ../..
