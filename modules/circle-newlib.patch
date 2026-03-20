@@ -38,15 +38,13 @@ index 13b0c166f..dd4d941f8 100644
  /* winsock[2].h defines as __stdcall, and with int as 2nd arg */
   int	gethostname (char *__name, size_t __len);
 diff --git a/newlib/libc/sys/circle/include/netinet/in.h b/newlib/libc/sys/circle/include/netinet/in.h
-index 5fa489f60..01357e6f7 100644
+index 5c1c658d7..b0b7f3a07 100644
 --- a/newlib/libc/sys/circle/include/netinet/in.h
 +++ b/newlib/libc/sys/circle/include/netinet/in.h
-@@ -87,4 +87,41 @@ struct ip_mreq_source
+@@ -88,4 +88,39 @@ struct ip_mreq_source
  #define IP_UNBLOCK_SOURCE (IP_ADD_MEMBERSHIP + 30)
  #define SO_PEERSEC (IP_ADD_MEMBERSHIP + 31)
  
--#endif
-\ No newline at end of file
 +/* The following IPv6 definitions are not really supported,
 +   but are necessary to compile Asio: */
 +
@@ -75,8 +73,6 @@ index 5fa489f60..01357e6f7 100644
 +        unsigned        ipv6mr_interface;
 +};
 +
-+#define IPPROTO_ICMPV6 58
-+
 +#define IPV6_UNICAST_HOPS (IP_ADD_MEMBERSHIP + 32)
 +#define IPV6_MULTICAST_IF (IP_ADD_MEMBERSHIP + 33)
 +#define IPV6_MULTICAST_HOPS (IP_ADD_MEMBERSHIP + 34)
@@ -84,7 +80,7 @@ index 5fa489f60..01357e6f7 100644
 +#define IPV6_JOIN_GROUP (IP_ADD_MEMBERSHIP + 36)
 +#define IPV6_LEAVE_GROUP (IP_ADD_MEMBERSHIP + 37)
 +
-+#endif
+ #endif
 diff --git a/newlib/libc/sys/circle/sys/select.h b/newlib/libc/sys/circle/sys/select.h
 index 4fd287325..5132b43a8 100644
 --- a/newlib/libc/sys/circle/sys/select.h
