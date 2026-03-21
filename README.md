@@ -25,10 +25,17 @@ Currently the circle-newlib submodule has to be patched with:
 make patch
 ```
 
-Then configure and build circle-stdlib and the linkhut tool in examples/linkhut/ (for Raspberry Pi 3 64-bit):
+Then configure and build circle-stdlib (for Raspberry Pi 3 64-bit):
 
 ```
 ./configure -r 3 -p aarch64-none-elf-
+make -j
+```
+
+Now you can go to an example or test directory and build it, e.g.:
+
+```
+cd examples/linkhut
 make -j
 ```
 

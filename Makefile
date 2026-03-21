@@ -5,10 +5,8 @@
 all:
 	$(MAKE) -C modules/circle-stdlib
 	$(MAKE) -C lib
-	$(MAKE) -C examples/linkhut
 
 clean:
-	$(MAKE) -C examples/linkhut clean
 	$(MAKE) -C lib clean
 	$(MAKE) -C modules/circle-stdlib mrproper
 
