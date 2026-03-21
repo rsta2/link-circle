@@ -31,7 +31,7 @@ INCLUDE += -isystem $(LINK_CIRCLE_HOME)/c++-include \
 	   -I $(LINK_HOME)/modules/asio-standalone/asio/include \
 	   -I $(LINK_HOME)/include
 
-LIBS =	$(LINK_CIRCLE_HOME)/lib/libporting.a \
+LIBS += $(LINK_CIRCLE_HOME)/lib/libporting.a \
 	$(NEWLIBDIR)/lib/libm.a \
 	$(NEWLIBDIR)/lib/libc.a \
 	$(NEWLIBDIR)/lib/libcirclenewlib.a \
