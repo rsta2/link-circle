@@ -1,16 +1,3 @@
-diff --git a/newlib/libc/include/string.h b/newlib/libc/include/string.h
-index 32199c027..646e65ee7 100644
---- a/newlib/libc/include/string.h
-+++ b/newlib/libc/include/string.h
-@@ -93,7 +93,7 @@ char 	*_strndup_r (struct _reent *, const char *, size_t);
-    _GNU_SOURCE, you get the GNU version; otherwise you get the POSIX
-    version.  POSIX requires that #undef strerror_r will still let you
-    invoke the underlying function, but that requires gcc support.  */
--#if __GNU_VISIBLE
-+#if __GNU_VISIBLE || defined(__circle__)
- char	*strerror_r (int, char *, size_t);
- #elif __POSIX_VISIBLE >= 200112
- # ifdef __GNUC__
 diff --git a/newlib/libc/include/sys/signal.h b/newlib/libc/include/sys/signal.h
 index 96bf9781a..826e0df04 100644
 --- a/newlib/libc/include/sys/signal.h
@@ -24,19 +11,6 @@ index 96bf9781a..826e0df04 100644
  typedef void (*_sig_func_ptr)(int);
  
  struct sigaction 
-diff --git a/newlib/libc/include/sys/unistd.h b/newlib/libc/include/sys/unistd.h
-index 13b0c166f..dd4d941f8 100644
---- a/newlib/libc/include/sys/unistd.h
-+++ b/newlib/libc/include/sys/unistd.h
-@@ -295,7 +295,7 @@ int	getdtablesize (void);
- useconds_t ualarm (useconds_t __useconds, useconds_t __interval);
- #endif
- 
--#if __BSD_VISIBLE || __POSIX_VISIBLE >= 200112 || __XSI_VISIBLE >= 500
-+#if __BSD_VISIBLE || __POSIX_VISIBLE >= 200112 || __XSI_VISIBLE >= 500 || defined(__circle__)
- #if !(defined  (_WINSOCK_H) || defined (_WINSOCKAPI_) || defined (__USE_W32_SOCKETS))
- /* winsock[2].h defines as __stdcall, and with int as 2nd arg */
-  int	gethostname (char *__name, size_t __len);
 diff --git a/newlib/libc/sys/circle/include/netinet/in.h b/newlib/libc/sys/circle/include/netinet/in.h
 index 5c1c658d7..b0b7f3a07 100644
 --- a/newlib/libc/sys/circle/include/netinet/in.h

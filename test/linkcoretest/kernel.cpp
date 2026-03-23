@@ -23,18 +23,6 @@
 
 extern int _main (int argc, char *argv[]);
 
-namespace
-{
-
-char *_strdup (const char *pString)
-{
-	char *p = new char[strlen (pString)+1];
-	assert (p);
-	return strcpy (p, pString);
-}
-
-}
-
 CKernel::CKernel(void)
 :	CStdlibAppNetwork ("linkcoretest")
 {
@@ -43,7 +31,7 @@ CKernel::CKernel(void)
 CStdlibApp::TShutdownMode CKernel::Run(void)
 {
 	char *ArgV[2];
-	ArgV[0] = _strdup (GetKernelName ());
+	ArgV[0] = strdup (GetKernelName ());
 	ArgV[1] = nullptr;
 
 	_main (1, ArgV);
