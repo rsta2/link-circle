@@ -1,7 +1,7 @@
 README
 
 This program flashes the Act LED and plays a short click sound via the headphone
-jack of your Raspberry Pi computer on each beat of the Ableton Link session.
+jack of your Raspberry Pi computer on each beat of the session.
 
 When you define GPIO_LED in kernel.cpp, not the Act LED flashes but a LED, which
 is connected to the given GPIO number (SoC number, not header position).

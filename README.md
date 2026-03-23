@@ -14,8 +14,8 @@ Using
 As a preliminary this assumes, that you have git and the necessary toolchains already installed. You can download the source code using:
 
 ```
-git clone https://github.com/rsta2/link.git
-cd link
+git clone https://github.com/rsta2/link-circle.git
+cd link-circle
 make submodules
 ```
 
