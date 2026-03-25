@@ -29,7 +29,10 @@ short CKernel::s_ClickSound[] =
 };
 
 CKernel::CKernel(void)
-:	CStdlibAppNetwork ("metro")
+:	CStdlibAppNetwork ("metro",
+			   CSTDLIBAPP_DEFAULT_PARTITION,
+			   0, 0, 0, 0,
+			   NetDeviceTypeEthernet)	// or: NetDeviceTypeWLAN
 #ifdef GPIO_LED
 	, m_LEDPin (GPIO_LED, GPIOModeOutput)
 #endif

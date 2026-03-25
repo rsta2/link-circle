@@ -19,7 +19,10 @@
 extern int _main ();
 
 CKernel::CKernel(void)
-:	CStdlibAppNetwork ("linkhut")
+:	CStdlibAppNetwork ("linkhut",
+			   CSTDLIBAPP_DEFAULT_PARTITION,
+			   0, 0, 0, 0,
+			   NetDeviceTypeEthernet)	// or: NetDeviceTypeWLAN
 {
 }
 
