@@ -11,11 +11,13 @@ clean:
 	$(MAKE) -C modules/circle-stdlib mrproper
 
 patch:
+	cd modules/circle-stdlib/libs/circle && git checkout --quiet develop
 	cd modules/circle-stdlib/libs/circle-newlib && \
 	git apply --quiet ../../../circle-newlib.patch
 
 unpatch:
 	cd modules/circle-stdlib/libs/circle-newlib && git restore .
+	cd modules/circle-stdlib && git submodule update --quiet libs/circle
 
 submodules:
 	cd modules && git submodule update --init link circle-stdlib
