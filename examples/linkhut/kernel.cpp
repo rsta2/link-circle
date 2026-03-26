@@ -16,14 +16,25 @@
 //
 #include "kernel.h"
 
-extern int _main ();
+extern int _main (CI2CMaster *pI2CMaster);
 
 CKernel::CKernel(void)
 :	CStdlibAppNetwork ("linkhut",
 			   CSTDLIBAPP_DEFAULT_PARTITION,
 			   0, 0, 0, 0,
-			   NetDeviceTypeEthernet)	// or: NetDeviceTypeWLAN
+			   NetDeviceTypeEthernet),	// or: NetDeviceTypeWLAN
+	m_I2CMaster (CMachineInfo::Get ()->GetDevice (DeviceI2CMaster), FALSE)
 {
+}
+
+boolean CKernel::Initialize (void)
+{
+	if (!CStdlibAppNetwork::Initialize ())
+	{
+		return false;
+	}
+
+	return m_I2CMaster.Initialize ();
 }
 
 CStdlibApp::TShutdownMode CKernel::Run(void)
@@ -32,7 +43,7 @@ CStdlibApp::TShutdownMode CKernel::Run(void)
 			     & ~(  CONSOLE_OPTION_ICANON
 			         | CONSOLE_OPTION_ECHO));
 
-	_main ();
+	_main (&m_I2CMaster);
 
 	return ShutdownHalt;
 }

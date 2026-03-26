@@ -23,6 +23,7 @@
 #include "AudioEngine.hpp"
 #include <circle/sched/task.h>
 #include <circle/sound/soundbasedevice.h>
+#include <circle/i2cmaster.h>
 #include <ableton/link/HostTimeFilter.hpp>
 #include <atomic>
 
@@ -36,7 +37,7 @@ class AudioTask;
 class AudioPlatform
 {
 public:
-  AudioPlatform(Link &rLink);
+  AudioPlatform(Link &rLink, CI2CMaster *pI2CMaster = nullptr);
   ~AudioPlatform();
 
   AudioEngine mEngine;
@@ -53,7 +54,7 @@ public:
   static const unsigned QueueSizeMillis = 4;
 
 public:
-  AudioTask(AudioEngine &rEngine);
+  AudioTask(AudioEngine &rEngine, CI2CMaster *pI2CMaster);
 
   void Stop();
 
@@ -62,6 +63,7 @@ private:
 
 private:
   AudioEngine &mrEngine;
+  CI2CMaster *mpI2CMaster;
   CSoundBaseDevice *mpSoundDevice;
   link::HostTimeFilter<platforms::circle::Clock> mHostTimeFilter;
   double mSampleTime;

@@ -28,6 +28,9 @@
 #if defined(LINK_PLATFORM_UNIX)
 #include <termios.h>
 #endif
+#if defined(__circle__)
+#include <circle/i2cmaster.h>
+#endif
 
 namespace
 {
@@ -38,10 +41,18 @@ struct State
   ableton::Link link;
   ableton::linkaudio::AudioPlatform audioPlatform;
 
+#if !defined(__circle__)
   State()
+#else
+  State(CI2CMaster *pI2CMaster)
+#endif
     : running(true)
     , link(120.)
+#if !defined(__circle__)
     , audioPlatform(link)
+#else
+    , audioPlatform(link, pI2CMaster)
+#endif
   {
   }
 };
@@ -187,12 +198,14 @@ void input(State& state)
 } // namespace
 
 #if defined(__circle__)
-int _main()
+int _main(CI2CMaster *pI2CMaster)
+{
+  State state(pI2CMaster);
 #else
 int main(int, char**)
-#endif
 {
   State state;
+#endif
   printHelp();
   printStateHeader();
   std::thread thread(input, std::ref(state));

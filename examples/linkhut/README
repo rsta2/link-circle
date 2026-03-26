@@ -1,0 +1,7 @@
+README
+
+The audio signal is available at the headphone jack of the Raspberry Pi by
+default. If you want to use an I2S interface, you have to add the following
+option the the first line of the cmdline.txt file on the SD card:
+
+	sounddev=sndi2s

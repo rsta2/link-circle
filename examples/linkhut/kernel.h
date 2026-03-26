@@ -18,13 +18,19 @@
 #define _kernel_h
 
 #include <circle_stdlib_app.h>
+#include <circle/i2cmaster.h>
 
 class CKernel : public CStdlibAppNetwork
 {
 public:
 	CKernel (void);
 
+	boolean Initialize (void);
+
 	TShutdownMode Run (void);
+
+private:
+	CI2CMaster m_I2CMaster;
 };
 
 #endif

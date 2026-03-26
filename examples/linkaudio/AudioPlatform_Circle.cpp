@@ -20,9 +20,12 @@
 
 #include "AudioPlatform_Circle.hpp"
 #include <circle/sound/pwmsoundbasedevice.h>
+#include <circle/sound/i2ssoundbasedevice.h>
 #include <circle/sched/scheduler.h>
 #include <circle/interrupt.h>
+#include <circle/koptions.h>
 #include <chrono>
+#include <cstring>
 #include <cassert>
 
 namespace ableton
@@ -30,9 +33,9 @@ namespace ableton
 namespace linkaudio
 {
 
-AudioPlatform::AudioPlatform(Link &rLink)
+AudioPlatform::AudioPlatform(Link &rLink, CI2CMaster *pI2CMaster)
   : mEngine(rLink)
-  , mpAudioTask(new AudioTask (mEngine))
+  , mpAudioTask(new AudioTask (mEngine, pI2CMaster))
 {
   assert (mpAudioTask);
 }
@@ -45,8 +48,9 @@ AudioPlatform::~AudioPlatform()
   mpAudioTask->WaitForTermination();
 }
 
-AudioTask::AudioTask(AudioEngine &rEngine)
+AudioTask::AudioTask(AudioEngine &rEngine, CI2CMaster *pI2CMaster)
   : mrEngine(rEngine)
+  , mpI2CMaster(pI2CMaster)
   , mpSoundDevice(nullptr)
   , mSampleTime(0)
   , mIsRunning(true)
@@ -61,7 +65,17 @@ void AudioTask::Stop()
 
 void AudioTask::Run()
 {
-  mpSoundDevice = new CPWMSoundBaseDevice(CInterruptSystem::Get(), SampleRate, ChunkSize);
+  CKernelOptions Options;
+  const char *pDeviceName = Options.GetSoundDevice();
+  if (strcmp(pDeviceName, "sndi2s") == 0)
+  {
+    mpSoundDevice = new CI2SSoundBaseDevice(CInterruptSystem::Get(), SampleRate, ChunkSize,
+                                            FALSE, mpI2CMaster);
+  }
+  else
+  {
+    mpSoundDevice = new CPWMSoundBaseDevice(CInterruptSystem::Get(), SampleRate, ChunkSize);
+  }
   assert (mpSoundDevice);
   mpSoundDevice->AllocateQueue(QueueSizeMillis);
   mpSoundDevice->SetWriteFormat(SoundFormatSigned16, 2);
