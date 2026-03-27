@@ -14,7 +14,7 @@ NEWLIBDIR ?= $(CIRCLE_STDLIB_DIR)/install/$(NEWLIB_ARCH)
 
 include $(CIRCLEHOME)/Rules.mk
 
-CFLAGS += -Wno-multichar -Wno-subobject-linkage
+CFLAGS += -Wno-multichar -Wno-subobject-linkage -Wno-psabi
 
 DEFINE += -DASIO_STANDALONE \
 	  -DASIO_HEADER_ONLY \
