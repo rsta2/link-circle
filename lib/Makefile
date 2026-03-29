@@ -4,7 +4,7 @@
 
 LINK_CIRCLE_HOME = ..
 
-OBJS	= if.o inet.o ioctl.o pause.o
+OBJS	= ioctl.o
 
 libporting.a: $(OBJS)
 	@echo "  AR    $@"
