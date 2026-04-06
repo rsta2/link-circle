@@ -50,8 +50,8 @@ class AudioTask : public CTask
 {
 public:
   static const unsigned SampleRate = 44100;
-  static const unsigned ChunkSize = 128;
-  static const unsigned QueueSizeMillis = 4;
+  static const unsigned ChunkSize = 256;
+  static const unsigned QueueSizeMillis = 20;
 
 public:
   AudioTask(AudioEngine &rEngine, CI2CMaster *pI2CMaster);
