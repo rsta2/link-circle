@@ -9,9 +9,7 @@ This project provides help for adding [Ableton Link](https://www.ableton.com/en/
 Status
 ------
 
-This is currently based on Ableton Link 3.1.5. Link Audio support is currently not available here. As far it was possible to test it, the Linkhut tool and an extended port of the ESP32 example (metro) are working. Also most of the Link core unit tests are working. Some of the tests cannot be build, because *serial_io* module is not available.
-
-Currently circle-stdlib supports most features for building Circle programs, which include Ableton Link support, but not all. Therefore this project contains a few patches and a porting library for circle-stdlib, which are meant to become part of circle-stdlib.
+This is currently based on Ableton Link 3.1.5. As far it was possible to test it, the Linkhut tool and an extended port of the ESP32 example (metro) are working. Also most of the Link core unit tests are working. Some of the tests cannot be build, because *serial_io* module is not available.
 
 Building
 --------
@@ -24,12 +22,6 @@ You can download the link-circle source code and the necessary submodules using:
 git clone https://github.com/rsta2/link-circle.git
 cd link-circle
 make submodules
-```
-
-Currently the circle-newlib submodule has to be patched with:
-
-```
-make patch
 ```
 
 Then configure and build circle-stdlib (here for Raspberry Pi 3 64-bit). The `-p` option must be applied with an absolute path to the toolchain binaries, if they are not in the `PATH` environment variable.
@@ -50,7 +42,6 @@ Cleanup project with:
 
 ```
 make clean
-make unpatch
 ```
 
 Credits
