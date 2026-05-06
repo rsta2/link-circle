@@ -12,6 +12,8 @@ include $(CIRCLE_STDLIB_DIR)/Config.mk
 CIRCLEHOME ?= $(CIRCLE_STDLIB_DIR)/libs/circle
 NEWLIBDIR ?= $(CIRCLE_STDLIB_DIR)/install/$(NEWLIB_ARCH)
 
+STANDARD = -std=c++17
+
 include $(CIRCLEHOME)/Rules.mk
 
 CFLAGS += -Wno-multichar -Wno-subobject-linkage -Wno-psabi
@@ -26,26 +28,14 @@ DEFINE += -DASIO_STANDALONE \
 	  -D_GNU_SOURCE \
 	  -D__LINUX_ERRNO_EXTENSIONS__
 
-INCLUDE += -isystem $(LINK_CIRCLE_HOME)/c++-include \
+INCLUDE += $(CIRCLE_STDLIB_INCLUDES) \
 	   -I $(LINK_CIRCLE_HOME)/include \
-	   -I $(NEWLIBDIR)/include \
-	   -I $(CIRCLE_STDLIB_DIR)/include \
 	   -I $(LINK_HOME)/modules/asio-standalone/asio/include \
 	   -I $(LINK_HOME)/include
 
 LIBS += $(LINK_CIRCLE_HOME)/lib/libporting.a \
-	$(NEWLIBDIR)/lib/libm.a \
-	$(NEWLIBDIR)/lib/libc.a \
-	$(NEWLIBDIR)/lib/libcirclenewlib.a \
-	$(CIRCLEHOME)/addon/SDCard/libsdcard.a \
-	$(CIRCLEHOME)/lib/usb/libusb.a \
-	$(CIRCLEHOME)/lib/input/libinput.a \
-	$(CIRCLEHOME)/addon/fatfs/libfatfs.a \
-	$(CIRCLEHOME)/lib/fs/libfs.a \
+	$(CIRCLE_STDLIB_LIBS) \
 	$(CIRCLEHOME)/addon/wlan/hostap/wpa_supplicant/libwpa_supplicant.a \
-	$(CIRCLEHOME)/addon/wlan/libwlan.a \
-	$(CIRCLEHOME)/lib/net/libnet.a \
-	$(CIRCLEHOME)/lib/sched/libsched.a \
-	$(CIRCLEHOME)/lib/libcircle.a
+	$(CIRCLEHOME)/addon/wlan/libwlan.a
 
 -include $(DEPS)
