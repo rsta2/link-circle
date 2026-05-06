@@ -2,6 +2,6 @@
 
 cd modules/circle-stdlib
 
-./configure $* --libcxx -o REALTIME
+./configure $* --libcxx --kernel-max-size 4 -o REALTIME
 
 cd ../..
