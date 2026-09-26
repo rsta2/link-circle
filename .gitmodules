@@ -3,4 +3,4 @@
 	url = https://github.com/ableton/link.git
 [submodule "modules/circle-stdlib"]
 	path = modules/circle-stdlib
-	url = https://codeberg.org/larchcone/circle-stdlib.git
+	url = https://github.com/smuehlst/circle-stdlib.git
